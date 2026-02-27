@@ -4,6 +4,7 @@ import esposito.medicalCenter.appointment.dto.RequestAppointmentDTO;
 import esposito.medicalCenter.appointment.dto.ResponseAppointmentDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
+import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
@@ -11,29 +12,30 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/appointment")
+@RequestMapping("/api/v1/appointments")
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
+    private final AppointmentFacadeService appointmentFacadeService;
 
-    @GetMapping("/all")
+    @GetMapping
     public ResponseEntity<List<ResponseAppointmentDTO>> getAllAppointment() {
         return ResponseEntity.ok(appointmentService.getAllAppointment());
     }
 
     @GetMapping("/{id}")
-    public ResponseEntity<ResponseAppointmentDTO> getAppointmentById(@RequestParam Long id) {
-        return null;
+    public ResponseEntity<ResponseAppointmentDTO> getAppointmentById(@PathVariable Long id) {
+        return ResponseEntity.ok(appointmentService.getAppointmentById(id));
     }
 
     @PostMapping
     public ResponseEntity<ResponseAppointmentDTO> createAppointment(@Valid @RequestBody RequestAppointmentDTO requestAppointmentDTO) {
-        return ResponseEntity.ok(appointmentService.createAppointment(requestAppointmentDTO));
+        return new ResponseEntity<>(appointmentFacadeService.createAppointmentAndHandlePatient(requestAppointmentDTO), HttpStatus.CREATED);
     }
 
-    @PutMapping
-    public ResponseEntity<ResponseAppointmentDTO> updateAppointment(@RequestBody RequestAppointmentDTO requestAppointmentDTO) {
-        return null;
+    @PutMapping("/{id}")
+    public ResponseEntity<ResponseAppointmentDTO> updateAppointment(@PathVariable Long id, @RequestBody RequestAppointmentDTO requestAppointmentDTO) {
+        return new ResponseEntity<>(appointmentService.updateAppointment(id, requestAppointmentDTO), HttpStatus.OK);
     }
 
 }

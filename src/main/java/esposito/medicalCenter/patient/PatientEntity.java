@@ -17,9 +17,16 @@ public class PatientEntity {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
+    @Column(nullable = false)
     private String email;
+
+    @Column(nullable = false)
     private String telephoneNumber;
+
+    @Column(nullable = false)
     private String name;
+
+    @Column(nullable = false)
     private String surname;
 
     @OneToMany(mappedBy = "patient", cascade = CascadeType.ALL, orphanRemoval = false)

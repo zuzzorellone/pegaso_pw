@@ -8,6 +8,9 @@ import java.time.LocalDateTime;
 
 public record RequestAppointmentDTO(
 
+        @JsonFormat(shape = JsonFormat.Shape.NUMBER)
+        Long id,
+
         @NotNull(message = "The patient information can't be null")
         RequestPatientDTO patient,
 

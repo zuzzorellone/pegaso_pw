@@ -2,16 +2,15 @@ package esposito.medicalCenter.appointment;
 
 import esposito.medicalCenter.appointment.dto.RequestAppointmentDTO;
 import esposito.medicalCenter.appointment.dto.ResponseAppointmentDTO;
-import esposito.medicalCenter.medicalExaminationType.MedicalExaminationTypeEntity;
 import esposito.medicalCenter.medicalExaminationType.MedicalExaminationTypeRepository;
 import esposito.medicalCenter.patient.PatientEntity;
 import esposito.medicalCenter.patient.PatientRepository;
+import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
-import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -19,7 +18,6 @@ import java.util.stream.Collectors;
 public class AppointmentService {
 
     private final AppointmentRepository appointmentRepository;
-    private final PatientRepository patientRepository;
     private final MedicalExaminationTypeRepository medicalExaminationTypeRepository;
 
     @Transactional(readOnly = true)
@@ -31,26 +29,37 @@ public class AppointmentService {
     }
 
     @Transactional
-    public ResponseAppointmentDTO createAppointment(RequestAppointmentDTO requestAppointmentDTO) {
+    public ResponseAppointmentDTO getAppointmentById(Long id) {
+        return appointmentRepository.findById(id)
+                .map(ResponseAppointmentDTO::new)
+                .orElseThrow(() -> new EntityNotFoundException("Appointment not found with ID: " + id));
+    }
+
+    @Transactional
+    public ResponseAppointmentDTO createAppointmentForPatient(PatientEntity patient, RequestAppointmentDTO request) {
+
         AppointmentEntity newAppointment = new AppointmentEntity();
 
-        Optional<MedicalExaminationTypeEntity> medicalExaminationType = medicalExaminationTypeRepository
-                .findMedicalExaminationTypeEntityByName(requestAppointmentDTO.medicalExaminationType());
+        var examType = medicalExaminationTypeRepository.findMedicalExaminationTypeEntityByName(request.medicalExaminationType())
+                .orElseThrow(() -> new EntityNotFoundException("Medical Examination Type not found: " + request.medicalExaminationType()));
 
-        if(medicalExaminationType.isEmpty()) {
-            MedicalExaminationTypeEntity m1 = new MedicalExaminationTypeEntity();
-            m1.setActive(Boolean.TRUE);
-            m1.setName(requestAppointmentDTO.medicalExaminationType());
-            m1.setDescription("Visita radiografica");
-
-            newAppointment.setMedicalExaminationType(medicalExaminationTypeRepository.save(m1));
-        }else {
-            newAppointment.setMedicalExaminationType(medicalExaminationType.get());
-        }
-
-        newAppointment.setAppointmentDate(requestAppointmentDTO.appointmentDate());
-
+        newAppointment.setMedicalExaminationType(examType);
+        newAppointment.setAppointmentDate(request.appointmentDate());
         newAppointment.setAppointmentStatus(AppointmentStatus.WAITING_FOR_PATIENT_CONFIRMATION);
+
+        newAppointment.setPatient(patient);
+
+        return new ResponseAppointmentDTO(appointmentRepository.save(newAppointment));
+    }
+
+    @Transactional
+    public ResponseAppointmentDTO updateAppointment(Long id, RequestAppointmentDTO requestAppointmentDTO) {
+        AppointmentEntity appointmentToUpdate = appointmentRepository.findById(id)
+                .orElseThrow(() -> new EntityNotFoundException("Appointment not found with ID: " + requestAppointmentDTO.id()));
+
+        appointmentToUpdate.setAppointmentDate(requestAppointmentDTO.appointmentDate());
+
+        appointmentToUpdate.setAppointmentStatus(AppointmentStatus.WAITING_FOR_PATIENT_CONFIRMATION);
 
         PatientEntity patientEntity = new PatientEntity();
         patientEntity.setName(requestAppointmentDTO.patient().name());
@@ -58,9 +67,6 @@ public class AppointmentService {
         patientEntity.setEmail(requestAppointmentDTO.patient().email());
         patientEntity.setTelephoneNumber(requestAppointmentDTO.patient().telephoneNumber());
 
-        newAppointment.setPatient(patientRepository.save(patientEntity));
-
-        AppointmentEntity appointmentEntitySaved = appointmentRepository.save(newAppointment);
-        return new ResponseAppointmentDTO(appointmentEntitySaved);
+        //appointmentToUpdate.setPatient(patientRepository.save(patientEntity));
     }
 }
