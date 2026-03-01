@@ -28,7 +28,7 @@ public class AppointmentService {
                 .collect(Collectors.toList());
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public ResponseAppointmentDTO getAppointmentById(Long id) {
         return appointmentRepository.findById(id)
                 .map(ResponseAppointmentDTO::new)
@@ -55,7 +55,7 @@ public class AppointmentService {
     @Transactional
     public ResponseAppointmentDTO updateAppointment(Long id, RequestAppointmentDTO requestAppointmentDTO) {
         AppointmentEntity appointmentToUpdate = appointmentRepository.findById(id)
-                .orElseThrow(() -> new EntityNotFoundException("Appointment not found with ID: " + requestAppointmentDTO.id()));
+                .orElseThrow(() -> new EntityNotFoundException("Appointment not found with ID: " + id));
 
         appointmentToUpdate.setAppointmentDate(requestAppointmentDTO.appointmentDate());
         appointmentToUpdate.setAppointmentStatus(AppointmentStatus.WAITING_FOR_PATIENT_CONFIRMATION);
