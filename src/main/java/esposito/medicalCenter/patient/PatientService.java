@@ -1,6 +1,7 @@
 package esposito.medicalCenter.patient;
 
 import esposito.medicalCenter.appointment.dto.RequestPatientDTO;
+import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -12,6 +13,7 @@ public class PatientService {
 
     private final PatientRepository patientRepository;
 
+    @Transactional
     public PatientEntity getOrCreatePatient(RequestPatientDTO requestPatientDTO) {
         return patientRepository.findPatientEntityByEmail(requestPatientDTO.email())
                 .orElseGet(() -> {

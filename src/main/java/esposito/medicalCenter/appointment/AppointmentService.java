@@ -60,7 +60,11 @@ public class AppointmentService {
         appointmentToUpdate.setAppointmentDate(requestAppointmentDTO.appointmentDate());
         appointmentToUpdate.setAppointmentStatus(AppointmentStatus.WAITING_FOR_PATIENT_CONFIRMATION);
 
-        if(!requestAppointmentDTO.medicalExaminationType().equals(appointmentToUpdate.getMedicalExaminationType().getName())) {
+        String currentExamName = appointmentToUpdate.getMedicalExaminationType() != null
+                ? appointmentToUpdate.getMedicalExaminationType().getName()
+                : null;
+
+        if (!java.util.Objects.equals(requestAppointmentDTO.medicalExaminationType(), currentExamName)) {
             appointmentToUpdate.setMedicalExaminationType(
                     medicalExaminationTypeRepository.findMedicalExaminationTypeEntityByName(requestAppointmentDTO.medicalExaminationType())
                             .orElseThrow(() -> new EntityNotFoundException("Medical Examination Type not found with name: " + requestAppointmentDTO.medicalExaminationType())));
