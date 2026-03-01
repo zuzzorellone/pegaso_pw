@@ -1,5 +1,8 @@
 package esposito.medicalCenter.medicalExaminationType;
 
+import esposito.medicalCenter.medicalExaminationType.dto.RequestMedicalExaminationTypeDTO;
+import esposito.medicalCenter.medicalExaminationType.dto.ResponseMedicalExaminationTypeDTO;
+import jakarta.transaction.Transactional;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -11,8 +14,6 @@ public class MedicalExaminationTypeService {
 
     public MedicalExaminationTypeService(MedicalExaminationTypeRepository medicalExaminationTypeRepository) {
         this.medicalExaminationTypeRepository = medicalExaminationTypeRepository;
-
-        createStartMedicalExaminationTypes();
     }
 
     public void createStartMedicalExaminationTypes() {
@@ -22,5 +23,15 @@ public class MedicalExaminationTypeService {
         m1.setDescription("Visita radiografica");
 
         medicalExaminationTypeRepository.save(m1);
+    }
+
+    @Transactional
+    public ResponseMedicalExaminationTypeDTO createMedicalExaminationType(RequestMedicalExaminationTypeDTO requestMedicalExaminationTypeDTO) {
+        MedicalExaminationTypeEntity medicalExaminationTypeEntity = new MedicalExaminationTypeEntity();
+        medicalExaminationTypeEntity.setName(requestMedicalExaminationTypeDTO.name());
+        medicalExaminationTypeEntity.setDescription(requestMedicalExaminationTypeDTO.description());
+        medicalExaminationTypeEntity =  medicalExaminationTypeRepository.save(medicalExaminationTypeEntity);
+
+        return new ResponseMedicalExaminationTypeDTO(medicalExaminationTypeEntity);
     }
 }

@@ -8,6 +8,7 @@ import java.time.LocalDateTime;
 @Data
 public class ResponseAppointmentDTO {
 
+    private Long id;
     private String patientName;
     private String patientSurname;
 
@@ -18,6 +19,7 @@ public class ResponseAppointmentDTO {
     private String medicalExaminationType;
 
     public ResponseAppointmentDTO(AppointmentEntity appointmentEntity) {
+        setId(appointmentEntity.getId());
         setPatientName(appointmentEntity.getPatient().getName());
         setPatientSurname(appointmentEntity.getPatient().getSurname());
         setAppointmentDateTime(appointmentEntity.getAppointmentDate());

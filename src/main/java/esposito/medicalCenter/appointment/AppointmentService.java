@@ -58,15 +58,14 @@ public class AppointmentService {
                 .orElseThrow(() -> new EntityNotFoundException("Appointment not found with ID: " + requestAppointmentDTO.id()));
 
         appointmentToUpdate.setAppointmentDate(requestAppointmentDTO.appointmentDate());
-
         appointmentToUpdate.setAppointmentStatus(AppointmentStatus.WAITING_FOR_PATIENT_CONFIRMATION);
 
-        PatientEntity patientEntity = new PatientEntity();
-        patientEntity.setName(requestAppointmentDTO.patient().name());
-        patientEntity.setSurname(requestAppointmentDTO.patient().surname());
-        patientEntity.setEmail(requestAppointmentDTO.patient().email());
-        patientEntity.setTelephoneNumber(requestAppointmentDTO.patient().telephoneNumber());
+        if(!requestAppointmentDTO.medicalExaminationType().equals(appointmentToUpdate.getMedicalExaminationType().getName())) {
+            appointmentToUpdate.setMedicalExaminationType(
+                    medicalExaminationTypeRepository.findMedicalExaminationTypeEntityByName(requestAppointmentDTO.medicalExaminationType())
+                            .orElseThrow(() -> new EntityNotFoundException("Medical Examination Type not found with name: " + requestAppointmentDTO.medicalExaminationType())));
+        }
 
-        //appointmentToUpdate.setPatient(patientRepository.save(patientEntity));
+        return new ResponseAppointmentDTO(appointmentRepository.save(appointmentToUpdate));
     }
 }
