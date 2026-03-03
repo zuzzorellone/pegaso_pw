@@ -2,6 +2,7 @@ package esposito.medicalCenter.medicalExaminationType;
 
 import esposito.medicalCenter.medicalExaminationType.dto.RequestMedicalExaminationTypeDTO;
 import esposito.medicalCenter.medicalExaminationType.dto.ResponseMedicalExaminationTypeDTO;
+import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -12,7 +13,7 @@ import java.util.List;
 
 @RestController
 @RequiredArgsConstructor
-@RequestMapping("/api/v1/medicalExaminationTypes")
+@RequestMapping("/api/v1/medical-examination-types")
 public class MedicalExaminationTypeController {
 
     private final MedicalExaminationTypeService medicalExaminationTypeService;
@@ -28,7 +29,7 @@ public class MedicalExaminationTypeController {
     }
 
     @PostMapping
-    public ResponseEntity<ResponseMedicalExaminationTypeDTO> createNewMedicalExaminationType(@RequestBody RequestMedicalExaminationTypeDTO requestDTO) {
+    public ResponseEntity<ResponseMedicalExaminationTypeDTO> createNewMedicalExaminationType(@Valid @RequestBody RequestMedicalExaminationTypeDTO requestDTO) {
         ResponseMedicalExaminationTypeDTO responseDTO = medicalExaminationTypeService.createMedicalExaminationType(requestDTO);
 
         return ResponseEntity.created(buildResourceUri(responseDTO.getId()))
@@ -37,7 +38,7 @@ public class MedicalExaminationTypeController {
 
     @PutMapping
     public ResponseEntity<ResponseMedicalExaminationTypeDTO> updateMedicalExaminationType(@PathVariable Long id,
-                                                                                          @RequestBody RequestMedicalExaminationTypeDTO requestDTO) {
+                                                                                          @Valid @RequestBody RequestMedicalExaminationTypeDTO requestDTO) {
         return ResponseEntity
                 .ok(medicalExaminationTypeService.updateMedicalExaminationType(id, requestDTO));
     }
