@@ -2,27 +2,34 @@ package esposito.medicalCenter.medicalExaminationType;
 
 import esposito.medicalCenter.medicalExaminationType.dto.RequestMedicalExaminationTypeDTO;
 import esposito.medicalCenter.medicalExaminationType.dto.ResponseMedicalExaminationTypeDTO;
-import jakarta.transaction.Transactional;
+import jakarta.persistence.EntityNotFoundException;
+import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
 @Service
+@RequiredArgsConstructor
 public class MedicalExaminationTypeService {
 
     private final MedicalExaminationTypeRepository medicalExaminationTypeRepository;
 
-    public MedicalExaminationTypeService(MedicalExaminationTypeRepository medicalExaminationTypeRepository) {
-        this.medicalExaminationTypeRepository = medicalExaminationTypeRepository;
+    @Transactional(readOnly = true)
+    public List<ResponseMedicalExaminationTypeDTO> getAllMedicalExaminationTypes() {
+        return medicalExaminationTypeRepository.findAll().stream().map(
+                ResponseMedicalExaminationTypeDTO::new
+        ).toList();
     }
 
-    public void createStartMedicalExaminationTypes() {
-        MedicalExaminationTypeEntity m1 = new MedicalExaminationTypeEntity();
-        m1.setActive(Boolean.TRUE);
-        m1.setName("RADIOGRAFIA");
-        m1.setDescription("Visita radiografica");
+    @Transactional(readOnly = true)
+    public ResponseMedicalExaminationTypeDTO getMedicalExaminationTypeByID(Long id) {
+        MedicalExaminationTypeEntity entity = medicalExaminationTypeRepository.findById(id)
+                .orElseThrow(
+                () -> new EntityNotFoundException("Medical Examination Type Not Found With ID: " + id)
+        );
 
-        medicalExaminationTypeRepository.save(m1);
+        return new ResponseMedicalExaminationTypeDTO(entity);
     }
 
     @Transactional
@@ -33,5 +40,20 @@ public class MedicalExaminationTypeService {
         medicalExaminationTypeEntity =  medicalExaminationTypeRepository.save(medicalExaminationTypeEntity);
 
         return new ResponseMedicalExaminationTypeDTO(medicalExaminationTypeEntity);
+    }
+
+    @Transactional
+    public ResponseMedicalExaminationTypeDTO updateMedicalExaminationType(Long id, RequestMedicalExaminationTypeDTO requestMedicalExaminationTypeDTO) {
+        MedicalExaminationTypeEntity entity = medicalExaminationTypeRepository.findById(id)
+                .orElseThrow(
+                        () -> new EntityNotFoundException("Medical Examination Type Not Found With ID: " + id)
+                );
+
+        entity.setDescription(requestMedicalExaminationTypeDTO.description());
+        entity.setName(requestMedicalExaminationTypeDTO.name());
+
+        entity = medicalExaminationTypeRepository.save(entity);
+
+        return new ResponseMedicalExaminationTypeDTO(entity);
     }
 }

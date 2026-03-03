@@ -1,11 +1,13 @@
 package esposito.medicalCenter.appointment.dto;
 
 import esposito.medicalCenter.appointment.AppointmentEntity;
+import lombok.AllArgsConstructor;
 import lombok.Data;
 
 import java.time.LocalDateTime;
 
 @Data
+@AllArgsConstructor
 public class ResponseAppointmentDTO {
 
     private Long id;
