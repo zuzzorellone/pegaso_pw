@@ -14,6 +14,9 @@ public record RequestPatientDTO(
         String email,
 
         @NotNull(message = "The patient telephone number can't be null")
-        String telephoneNumber
+        String telephoneNumber,
+
+        @NotNull(message = "The patient tax identification number can't be null")
+        String taxIdentificationNumber
 ) {
 }

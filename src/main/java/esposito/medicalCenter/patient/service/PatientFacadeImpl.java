@@ -1,10 +1,10 @@
 package esposito.medicalCenter.patient.service;
 
 import esposito.medicalCenter.appointment.dto.RequestPatientDTO;
+import esposito.medicalCenter.patient.api.PatientFacade;
 import esposito.medicalCenter.patient.api.PatientIntegrationDTO;
 import esposito.medicalCenter.patient.entity.PatientEntity;
 import esposito.medicalCenter.patient.repository.PatientRepository;
-import esposito.medicalCenter.patient.api.PatientFacade;
 import jakarta.persistence.EntityNotFoundException;
 import jakarta.transaction.Transactional;
 import lombok.RequiredArgsConstructor;
@@ -30,6 +30,7 @@ public class PatientFacadeImpl implements PatientFacade {
                     newPatient.setSurname(requestPatientDTO.surname());
                     newPatient.setEmail(requestPatientDTO.email());
                     newPatient.setTelephoneNumber(requestPatientDTO.telephoneNumber());
+                    newPatient.setTaxIdentificationNumber(requestPatientDTO.taxIdentificationNumber());
 
                      return patientRepository.save(newPatient);
 
@@ -60,11 +61,20 @@ public class PatientFacadeImpl implements PatientFacade {
         return mapToReturn;
     }
 
+    @Override
+    public PatientIntegrationDTO getPatientByTaxIdentificationNumber(String taxIdentificationNumber) {
+        PatientEntity patientEntity = patientRepository.findPatientEntityByTaxIdentificationNumber(taxIdentificationNumber)
+                .orElseThrow(() -> new EntityNotFoundException("Patient not found with tax identification number: "+ taxIdentificationNumber));
+
+        return mapEntityToDTO(patientEntity);
+    }
+
     private PatientIntegrationDTO mapEntityToDTO(PatientEntity patientEntity) {
         return new PatientIntegrationDTO(patientEntity.getId(),
                 patientEntity.getName(),
                 patientEntity.getSurname(),
                 patientEntity.getEmail(),
-                patientEntity.getTelephoneNumber());
+                patientEntity.getTelephoneNumber(),
+                patientEntity.getTaxIdentificationNumber());
     }
 }

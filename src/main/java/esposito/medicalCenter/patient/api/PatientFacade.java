@@ -11,4 +11,5 @@ public interface PatientFacade {
 
     public Map<Long, PatientIntegrationDTO> getPatientListByIds(Set<Long> patientIdSet);
     public PatientIntegrationDTO getPatientById(Long id);
+    public PatientIntegrationDTO getPatientByTaxIdentificationNumber(String taxIdentificationNumber);
 }

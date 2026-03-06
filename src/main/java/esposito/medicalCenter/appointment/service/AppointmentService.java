@@ -6,7 +6,6 @@ import esposito.medicalCenter.appointment.dto.ResponseAppointmentDTO;
 import esposito.medicalCenter.appointment.entity.AppointmentEntity;
 import esposito.medicalCenter.appointment.repository.AppointmentRepository;
 import esposito.medicalCenter.appointment.repository.MedicalExaminationTypeRepository;
-import esposito.medicalCenter.medicalExaminationType.api.MedicalExaminationFacade;
 import esposito.medicalCenter.patient.api.PatientFacade;
 import esposito.medicalCenter.patient.api.PatientIntegrationDTO;
 import jakarta.persistence.EntityNotFoundException;

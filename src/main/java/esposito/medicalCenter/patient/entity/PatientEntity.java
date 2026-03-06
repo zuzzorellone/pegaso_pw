@@ -20,6 +20,9 @@ public class PatientEntity {
     @Column(unique = true, nullable = false)
     private String telephoneNumber;
 
+    @Column(unique = true, nullable = false)
+    private String taxIdentificationNumber;
+
     @Column(nullable = false)
     private String name;
 

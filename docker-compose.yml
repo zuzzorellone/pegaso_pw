@@ -27,6 +27,8 @@ services:
     container_name: spring_backend
     ports:
       - "8080:8080"
+    volumes:
+      - /home/boarbyte/medical_uploads:/home/boarbyte/medical_uploads
     depends_on:
       postgres:
         condition: service_healthy

@@ -1,6 +1,7 @@
 package esposito.medicalCenter.report.dto;
 
 import esposito.medicalCenter.report.entity.ReportEntity;
+import lombok.AllArgsConstructor;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
@@ -8,11 +9,10 @@ import lombok.Setter;
 @Getter
 @Setter
 @NoArgsConstructor
+@AllArgsConstructor
 public class ReportSummaryResponse {
 
     private Long id;
-
-    public ReportSummaryResponse(ReportEntity entity) {
-        id = entity.getId();
-    }
+    private String filename;
+    private Long appointmentId;
 }

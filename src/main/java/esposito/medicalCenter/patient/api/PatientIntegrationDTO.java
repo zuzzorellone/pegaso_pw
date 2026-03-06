@@ -6,6 +6,7 @@ public record PatientIntegrationDTO(
         String name,
         String surname,
         String email,
-        String telephoneNumber
+        String telephoneNumber,
+        String taxIdentificationNumber
 ) {
 }

@@ -11,8 +11,5 @@ import java.util.Set;
 @Repository
 public interface ReportRepository extends JpaRepository<ReportEntity, Long> {
 
-    @Query("SELECT r FROM ReportEntity r WHERE r.appointment.id = :id")
-    Set<ReportEntity> findReportEntitiesByAppointmentId(@Param("id") Long id);
-
     Set<ReportEntity> findByAppointmentId(Long appointmentId);
 }
