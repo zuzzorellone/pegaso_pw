@@ -1,10 +1,10 @@
-package esposito.medicalCenter.appointment;
+package esposito.medicalCenter.appointment.controller;
 
+import esposito.medicalCenter.appointment.service.AppointmentService;
 import esposito.medicalCenter.appointment.dto.RequestAppointmentDTO;
 import esposito.medicalCenter.appointment.dto.ResponseAppointmentDTO;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
@@ -18,7 +18,6 @@ import java.util.List;
 public class AppointmentController {
 
     private final AppointmentService appointmentService;
-    private final AppointmentFacadeService appointmentFacadeService;
 
     @GetMapping
     public ResponseEntity<List<ResponseAppointmentDTO>> getAllAppointment() {
@@ -34,7 +33,7 @@ public class AppointmentController {
 
     @PostMapping
     public ResponseEntity<ResponseAppointmentDTO> createAppointment(@Valid @RequestBody RequestAppointmentDTO requestAppointmentDTO) {
-        ResponseAppointmentDTO response = appointmentFacadeService.createAppointmentAndHandlePatient(requestAppointmentDTO);
+        ResponseAppointmentDTO response = appointmentService.createAppointmentAndHandlePatient(requestAppointmentDTO);
         return ResponseEntity
                 .created(buildResourceUri(response.getId()))
                 .body(response);
@@ -53,5 +52,4 @@ public class AppointmentController {
                 .buildAndExpand(id)
                 .toUri();
     }
-
 }

@@ -1,8 +1,6 @@
-package esposito.medicalCenter.medicalExaminationType.dto;
+package esposito.medicalCenter.appointment.dto;
 
 import jakarta.validation.constraints.NotNull;
-import lombok.Getter;
-import lombok.Setter;
 
 
 public record RequestMedicalExaminationTypeDTO(

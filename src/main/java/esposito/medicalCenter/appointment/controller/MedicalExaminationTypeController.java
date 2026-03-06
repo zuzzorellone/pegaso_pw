@@ -1,7 +1,8 @@
-package esposito.medicalCenter.medicalExaminationType;
+package esposito.medicalCenter.appointment.controller;
 
-import esposito.medicalCenter.medicalExaminationType.dto.RequestMedicalExaminationTypeDTO;
-import esposito.medicalCenter.medicalExaminationType.dto.ResponseMedicalExaminationTypeDTO;
+import esposito.medicalCenter.appointment.dto.RequestMedicalExaminationTypeDTO;
+import esposito.medicalCenter.appointment.dto.ResponseMedicalExaminationTypeDTO;
+import esposito.medicalCenter.appointment.service.MedicalExaminationTypeService;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import org.springframework.http.ResponseEntity;
@@ -50,6 +51,4 @@ public class MedicalExaminationTypeController {
                 .buildAndExpand(id)
                 .toUri();
     }
-
-
 }

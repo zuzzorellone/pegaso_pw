@@ -1,13 +1,14 @@
 package esposito.medicalCenter.appointment.dto;
 
-import esposito.medicalCenter.appointment.AppointmentEntity;
+import esposito.medicalCenter.appointment.entity.AppointmentEntity;
 import lombok.AllArgsConstructor;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 import java.time.LocalDateTime;
 
 @Data
-@AllArgsConstructor
+@NoArgsConstructor
 public class ResponseAppointmentDTO {
 
     private Long id;
@@ -19,13 +20,4 @@ public class ResponseAppointmentDTO {
     private String status;
 
     private String medicalExaminationType;
-
-    public ResponseAppointmentDTO(AppointmentEntity appointmentEntity) {
-        setId(appointmentEntity.getId());
-        setPatientName(appointmentEntity.getPatient().getName());
-        setPatientSurname(appointmentEntity.getPatient().getSurname());
-        setAppointmentDateTime(appointmentEntity.getAppointmentDate());
-        setStatus(appointmentEntity.getAppointmentStatus().name());
-        setMedicalExaminationType(appointmentEntity.getMedicalExaminationType().getName());
-    }
 }

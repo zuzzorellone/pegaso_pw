@@ -1,7 +1,9 @@
-package esposito.medicalCenter.medicalExaminationType;
+package esposito.medicalCenter.appointment.service;
 
-import esposito.medicalCenter.medicalExaminationType.dto.RequestMedicalExaminationTypeDTO;
-import esposito.medicalCenter.medicalExaminationType.dto.ResponseMedicalExaminationTypeDTO;
+import esposito.medicalCenter.appointment.entity.MedicalExaminationTypeEntity;
+import esposito.medicalCenter.appointment.repository.MedicalExaminationTypeRepository;
+import esposito.medicalCenter.appointment.dto.RequestMedicalExaminationTypeDTO;
+import esposito.medicalCenter.appointment.dto.ResponseMedicalExaminationTypeDTO;
 import jakarta.persistence.EntityNotFoundException;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;

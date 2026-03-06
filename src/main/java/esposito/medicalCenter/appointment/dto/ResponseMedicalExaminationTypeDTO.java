@@ -1,6 +1,6 @@
-package esposito.medicalCenter.medicalExaminationType.dto;
+package esposito.medicalCenter.appointment.dto;
 
-import esposito.medicalCenter.medicalExaminationType.MedicalExaminationTypeEntity;
+import esposito.medicalCenter.appointment.entity.MedicalExaminationTypeEntity;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;

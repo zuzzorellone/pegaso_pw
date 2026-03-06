@@ -1,14 +1,11 @@
-package esposito.medicalCenter.appointment;
+package esposito.medicalCenter.appointment.entity;
 
-import esposito.medicalCenter.medicalExaminationType.MedicalExaminationTypeEntity;
-import esposito.medicalCenter.patient.PatientEntity;
-import esposito.medicalCenter.report.ReportEntity;
+import esposito.medicalCenter.appointment.AppointmentStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
 import java.time.LocalDateTime;
-import java.util.List;
 
 @Entity
 @Getter
@@ -27,15 +24,10 @@ public class AppointmentEntity {
     @Column(name = "status", nullable = false)
     private AppointmentStatus appointmentStatus;
 
-    @ManyToOne(fetch = FetchType.EAGER)
+    @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "medical_examination_type_id", nullable = false)
     private MedicalExaminationTypeEntity medicalExaminationType;
 
-    @ManyToOne(fetch = FetchType.EAGER)
-    @JoinColumn(name = "patient_id", nullable = false)
-    private PatientEntity patient;
-
-    @OneToMany(mappedBy = "appointment",  cascade = CascadeType.ALL, orphanRemoval = true)
-    private List<ReportEntity> reportList;
-
+    @Column(name = "patient_id", nullable = false)
+    private Long patientId;
 }
