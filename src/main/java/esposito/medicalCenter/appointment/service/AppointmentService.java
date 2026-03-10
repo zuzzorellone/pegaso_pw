@@ -4,6 +4,7 @@ import esposito.medicalCenter.appointment.AppointmentStatus;
 import esposito.medicalCenter.appointment.dto.RequestAppointmentDTO;
 import esposito.medicalCenter.appointment.dto.ResponseAppointmentDTO;
 import esposito.medicalCenter.appointment.entity.AppointmentEntity;
+import esposito.medicalCenter.appointment.entity.MedicalExaminationTypeEntity;
 import esposito.medicalCenter.appointment.repository.AppointmentRepository;
 import esposito.medicalCenter.appointment.repository.MedicalExaminationTypeRepository;
 import esposito.medicalCenter.patient.api.PatientFacade;
@@ -13,9 +14,12 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import java.util.List;
-import java.util.Map;
-import java.util.Set;
+import java.time.Duration;
+import java.time.LocalDate;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
+import java.time.format.DateTimeFormatter;
+import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
@@ -105,11 +109,72 @@ public class AppointmentService {
         return createAppointmentForPatient(patientID, requestAppointmentDTO);
     }
 
+    @Transactional(readOnly = true)
+    public List<String> getBookedDates(String medicalExaminationType) {
+        List<AppointmentEntity> appointmentBooked = appointmentRepository
+                .getAllAppointmentDateTimeList(medicalExaminationType, LocalDateTime.now());
+
+        MedicalExaminationTypeEntity examType =
+                medicalExaminationTypeRepository.findMedicalExaminationTypeEntityByName(medicalExaminationType)
+                        .orElseThrow(() -> new EntityNotFoundException("Medical Examination Type Not Found With Name: " + medicalExaminationType));
+
+        long totalMinutes = Duration.between(examType.getOpenTime(), examType.getCloseTime()).toMinutes();
+        int maxSlotsPerDay = (int) (totalMinutes / examType.getExaminationDuration());
+
+        Map<LocalDate, Long> dailyCounts = appointmentBooked.stream()
+                .collect(Collectors.groupingBy(
+                        app -> app.getAppointmentDate().toLocalDate(),
+                        Collectors.counting()
+                ));
+
+        return dailyCounts.entrySet().stream()
+                .filter(entry -> entry.getValue() >= maxSlotsPerDay)
+                .map(entry -> entry.getKey().toString())
+                .collect(Collectors.toList());
+    }
+
+    @Transactional(readOnly = true)
+    public List<String> getOccupiedTimesForDate(String dateString, String examinationType) {
+        MedicalExaminationTypeEntity examType =
+                medicalExaminationTypeRepository.findMedicalExaminationTypeEntityByName(examinationType)
+                    .orElseThrow(() -> new EntityNotFoundException("Medical Examination Type Not Found With Name: " + examinationType));
+
+        LocalTime openTime = examType.getOpenTime();
+        LocalTime closeTime = examType.getCloseTime();
+        int durationMinutes = examType.getExaminationDuration();
+
+        LocalDate targetDate = LocalDate.parse(dateString);
+        LocalDateTime startOfDay = targetDate.atStartOfDay();
+        LocalDateTime endOfDay = targetDate.atTime(LocalTime.MAX);
+
+        List<AppointmentEntity> dailyAppointments = appointmentRepository
+                .findByAppointmentDateBetweenAndExaminationTypeName(startOfDay, endOfDay, examinationType);
+
+        List<LocalTime> occupiedTimes = dailyAppointments.stream()
+                .map(appointment -> appointment.getAppointmentDate().toLocalTime())
+                .toList();
+
+        List<String> availableSlots = new ArrayList<>();
+        LocalTime currentSlot = openTime;
+
+        while (!currentSlot.plusMinutes(durationMinutes).isAfter(closeTime)) {
+            if (!occupiedTimes.contains(currentSlot)) {
+                availableSlots.add(currentSlot.toString());
+            }
+
+            currentSlot = currentSlot.plusMinutes(durationMinutes);
+        }
+
+        return availableSlots;
+    }
+
+    // UTILITY
     private ResponseAppointmentDTO mapEntityToDTO(AppointmentEntity appointmentEntity, PatientIntegrationDTO patientIntegrationDTO) {
         ResponseAppointmentDTO responseAppointmentDTO = new ResponseAppointmentDTO();
         responseAppointmentDTO.setId(appointmentEntity.getId());
         responseAppointmentDTO.setAppointmentDateTime(appointmentEntity.getAppointmentDate());
         responseAppointmentDTO.setMedicalExaminationType(appointmentEntity.getMedicalExaminationType().getName());
+        responseAppointmentDTO.setStatus(appointmentEntity.getAppointmentStatus().name());
 
         if(patientIntegrationDTO != null) {
             responseAppointmentDTO.setPatientName(patientIntegrationDTO.name());

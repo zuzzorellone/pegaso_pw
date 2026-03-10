@@ -9,6 +9,7 @@ import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import java.time.DayOfWeek;
 import java.util.List;
 
 @Service
@@ -39,6 +40,20 @@ public class MedicalExaminationTypeService {
         MedicalExaminationTypeEntity medicalExaminationTypeEntity = new MedicalExaminationTypeEntity();
         medicalExaminationTypeEntity.setName(requestMedicalExaminationTypeDTO.name());
         medicalExaminationTypeEntity.setDescription(requestMedicalExaminationTypeDTO.description());
+        medicalExaminationTypeEntity.setExaminationDuration(requestMedicalExaminationTypeDTO.duration());
+        medicalExaminationTypeEntity.setOpenTime(requestMedicalExaminationTypeDTO.openTime());
+        medicalExaminationTypeEntity.setCloseTime(requestMedicalExaminationTypeDTO.closeTime());
+
+        if (requestMedicalExaminationTypeDTO.daysOfWeek() != null) {
+            for (String day : requestMedicalExaminationTypeDTO.daysOfWeek()) {
+                medicalExaminationTypeEntity.addOpeningDay(DayOfWeek.valueOf(day.trim().toUpperCase()));
+            }
+        }else {
+            for (DayOfWeek day : DayOfWeek.values()) {
+                medicalExaminationTypeEntity.addOpeningDay(DayOfWeek.valueOf(day.name().toUpperCase()));
+            }
+        }
+
         medicalExaminationTypeEntity =  medicalExaminationTypeRepository.save(medicalExaminationTypeEntity);
 
         return new ResponseMedicalExaminationTypeDTO(medicalExaminationTypeEntity);
@@ -53,6 +68,9 @@ public class MedicalExaminationTypeService {
 
         entity.setDescription(requestMedicalExaminationTypeDTO.description());
         entity.setName(requestMedicalExaminationTypeDTO.name());
+        entity.setExaminationDuration(requestMedicalExaminationTypeDTO.duration());
+        entity.setOpenTime(requestMedicalExaminationTypeDTO.openTime());
+        entity.setCloseTime(requestMedicalExaminationTypeDTO.closeTime());
 
         entity = medicalExaminationTypeRepository.save(entity);
 

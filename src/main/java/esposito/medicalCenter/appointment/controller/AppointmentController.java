@@ -45,6 +45,20 @@ public class AppointmentController {
                 .ok(appointmentService.updateAppointment(id, requestAppointmentDTO));
     }
 
+    @GetMapping("/bookedDates")
+    public ResponseEntity<List<String>> getBookedDatesForMedicalExaminationType(@RequestParam String medicalExaminationType) {
+        return ResponseEntity
+                .ok(appointmentService.getBookedDates(medicalExaminationType));
+    }
+
+    @GetMapping("/availableTimes")
+    public ResponseEntity<List<String>> getAvailableTimes(@RequestParam String selectedDate,
+                                                          @RequestParam String medicalExaminationType) {
+        return ResponseEntity
+                .ok(appointmentService.getOccupiedTimesForDate(selectedDate, medicalExaminationType));
+    }
+
+    // UTILITY
     private URI buildResourceUri(Long id) {
         return ServletUriComponentsBuilder
                 .fromCurrentRequest()

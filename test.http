@@ -30,12 +30,16 @@ POST http://localhost:8080//api/v1/medical-examination-types
 Content-Type: application/json
 
 {
-    "name": "RADIOGRAPHY",
-    "description": "Reparto di radiografia"
+    "name": "BLOOD_TEST",
+    "description": "Analisi del sangue",
+    "openTime": "09:00",
+    "closeTime": "10:00",
+    "duration": 30,
+    "daysOfWeek": ["FRIDAY"]
 }
 
 ### REPORT - CREATE NEW ONE
-POST http://localhost:8080/api/v1/reports?appointmentId=2
+POST http://localhost:8080/api/v1/reports?appointmentId=7
 Content-Type: multipart/form-data; boundary=MioBoundary
 
 --MioBoundary
@@ -46,11 +50,11 @@ Content-Type: application/pdf
 --MioBoundary--
 
 ### REPORT - GET ALL BY APPOINTMENT
-GET http://localhost:8080/api/v1/reports?appointmentId=1
+GET http://localhost:8080/api/v1/reports?appointmentId=7
 Accept: application/json
 
 ### REPORT - GENERATE NEW TOKEN
-POST http://localhost:8080/api/v1/reports/5/generate-token
+POST http://localhost:8080/api/v1/reports/1/generate-token
 Accept: application/json
 
 ### PUBLIC REPORT - GET ALL BY APPOINTMENT
